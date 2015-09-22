@@ -19,7 +19,6 @@ class Task(Document):
     assigne = EmailField(max_length=120, required=True)
 
     created_at = DateTimeField(default=datetime.datetime.now, required=True)
-    closed_at = DateTimeField(required=False)
 
     status = IntField(default=0, required=True)
     priority = IntField(default=Priority.LOW, required=True)

@@ -1,2 +1,2 @@
 # lazy-todo
-An implementation of a command-line todo-list in Python.
+An implementation of a shared todo-list with command-line interface in Python.

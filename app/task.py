@@ -80,3 +80,12 @@ def addTask(title, description, creator, assigne, created_at=None, status=None,
         logger.exception('An exception has been encountered during the insertion of'
             'a task.')
         raise TaskError('Couldn\'t add your task to the list.')
+
+def removeTask(id):
+    """
+    Removes a task from the list, identified by it's ObjectId.
+    """
+    task = Task.objects(id = id).first()
+    if task is None:
+        raise TaskError('The specified task does not exist in the collection.')
+    task.delete()

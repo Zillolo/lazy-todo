@@ -1,8 +1,9 @@
+from bson.objectid import ObjectId
 from mongoengine import ValidationError
 from nose.tools import raises
 import datetime
 
-from app.task import Priority, Status, Task, TaskError, addTask
+from app.task import Priority, Status, Task, TaskError, addTask, removeTask
 
 def test_Set_Title_String():
     task = Task()
@@ -41,3 +42,20 @@ def test_Add_Task_Full():
 @raises(TaskError)
 def test_Add_Task_Title_Int():
     addTask(1, '', 'email@email.com', 'email@email.com')
+
+def test_Remove_Task():
+    task = Task()
+    task.title = 'Title'
+    task.description = ''
+    task.creator = 'email@email.com'
+    task.assigne = 'email@email.com'
+
+    task.save()
+
+    removeTask(task.id)
+    task = Task.objects(id = task.id).first()
+    assert task is None
+
+@raises(TaskError)
+def test_Remove_Task_Wrong_Id():
+    removeTask(ObjectId('000000000000000000000000'))

@@ -77,15 +77,21 @@ def addTask(title, description, creator, assigne, created_at=None, status=None,
 
         task.save()
     except ValidationError as e:
-        logger.exception('An exception has been encountered during the insertion of'
-            'a task.')
+        logger.exception('An exception has been encountered during the '
+        'insertion of a task.')
         raise TaskError('Couldn\'t add your task to the list.')
+
+    return task.id
 
 def removeTask(id):
     """
     Removes a task from the list, identified by it's ObjectId.
     """
-    task = Task.objects(id = id).first()
+    try:
+        task = Task.objects(id = id).first()
+    except ValidationError:
+        raise TaskError('The specified task does not exist in the collection.')
+
     if task is None:
         raise TaskError('The specified task does not exist in the collection.')
     task.delete()

@@ -33,7 +33,7 @@ class Task(Document):
         status (Status): The current status of the Task.
         priority(Priority): The priority level of the Task.
     """
-    title = StringField(max_length=150, unique=True, required=True)
+    title = StringField(max_length=150, required=True)
     description = StringField(max_length=800, required=True)
 
     creator = EmailField(max_length=120, required=True)
@@ -96,10 +96,18 @@ def addTask(title, description, creator, assignee, created_at=None, status=None,
         TaskError: If any field of the Task is invalid.
     """
     task = Task()
-    task.title = title
-    task.description = description
-    task.creator = creator
-    task.assignee = assignee
+
+    # Cast here explicitly to work around TypeError in MongoEngine email field.
+    try:
+        task.title = str(title)
+        task.description = str(description)
+        task.creator = str(creator)
+        task.assignee = str(assignee)
+    except ValueError:
+        logger.exception('An exception has been encountered during the'
+            ' insertion of a task.')
+        raise TaskError('The specified information is not in the correct'
+            ' format')
 
     # Check whether optional field values have been supplied.
     if created_at is not None:
@@ -115,8 +123,8 @@ def addTask(title, description, creator, assignee, created_at=None, status=None,
 
         task.save()
     except ValidationError as e:
-        logger.exception('An exception has been encountered during the '
-            'insertion of a task.')
+        logger.exception('An exception has been encountered during the'
+            ' insertion of a task.')
 
         #TODO: Clean this. We shouldnt display a dictionary directly to the user.
         raise TaskError('Your task contains invalid information.\n'
@@ -137,12 +145,14 @@ def fetchByAssignee(assignee):
     Raises:
         TaskError: If the assignee has no tasks in the repository.
     """
-        tasks = Task.objects(assignee = assignee).all()
+    tasks = Task.objects(assignee = assignee).all()
 
-        if tasks is None:
-            logger.info('A fetch operation returned no results.')
-            raise TaskError('The specified assignee has no tasks in the'
-                ' repository.')
+    if tasks is None or len(tasks) == 0:
+        logger.info('A fetch operation returned no results.')
+        raise TaskError('The specified assignee has no tasks in the'
+            ' repository.')
+
+    return tasks
 
 def removeTaskById(id):
     """

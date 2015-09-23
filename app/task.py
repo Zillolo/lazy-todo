@@ -28,7 +28,7 @@ class Task(Document):
         title (str): The title of the Task.
         description (str): A description of the Task.
         creator (str): The task creators email address.
-        assigne (str): The email address of the person the Task is assigned to.
+        assignee (str): The email address of the person the Task is assigneed to.
         created_at (datetime): The point in the time when the Task was created.
         status (Status): The current status of the Task.
         priority(Priority): The priority level of the Task.
@@ -37,7 +37,7 @@ class Task(Document):
     description = StringField(max_length=800, required=True)
 
     creator = EmailField(max_length=120, required=True)
-    assigne = EmailField(max_length=120, required=True)
+    assignee = EmailField(max_length=120, required=True)
 
     created_at = DateTimeField(default=datetime.datetime.now, required=True)
 
@@ -45,32 +45,60 @@ class Task(Document):
     priority = IntField(default=Priority.LOW, required=True)
 
     def __str__(self):
-        return ('ID: {7}\nTitle: {0}\nCreator: {2}\nAssigne: {3}\n'
+        """
+        Returns a string representation of the Task.
+        It is formatted as follows:
+        ID: <ID>
+        Title: <Title>
+        Creator: <Creator>
+        Assignee: <assignee>
+        Created: <Created>
+        Status: <Status>
+        Priority: <Priority>
+
+        Description: <Description>
+        """
+        return ('ID: {7}\nTitle: {0}\nCreator: {2}\nAssignee: {3}\n'
             'Created: {4}\nStatus: {5}\nPriority: {6}\n'
             '\nDescription: {1}\n'.format(self.title,
-                self.description, self.creator, self.assigne, self.created_at,
+                self.description, self.creator, self.assignee, self.created_at,
                 self.status, self.priority, self.id))
 
 class TaskError(Exception):
     """
-    An exception to be used for all error that can occure during handling of tasks.
+    An exception to be used for all errors that can occure during handling of
+        tasks.
     """
     def __init__(self, message):
         self.message = message
     def __str__(self):
         return repr(self.message)
 
-def addTask(title, description, creator, assigne, created_at=None, status=None,
+def addTask(title, description, creator, assignee, created_at=None, status=None,
     priority=None):
     """
-    Adds a new task to the list.
+    Adds a task with the supplied parameters to the collection.
+
+    Args:
+        title (str): The title of the Task.
+        description (str): A description of the Task.
+        creator (str): The email address of the creator.
+        assignee (str): The email address of the person the task will be
+            assigneed to.
+        created_at (datetime): The datetime of creation.
+        status (Status): The status of the Task.
+        priority (Priority): The priority level of the Task.
+
+    Returns:
+        ObjectId: The ObjectId of the newly inserted Task.
     """
     task = Task()
     task.title = title
     task.description = description
     task.creator = creator
-    task.assigne = assigne
+    task.assignee = assignee
 
+    # Check whether optional field values have been supplied.
     if created_at is not None:
         task.created_at = created_at
     if status is not None:
@@ -79,13 +107,15 @@ def addTask(title, description, creator, assigne, created_at=None, status=None,
         task.priority = priority
 
     try:
-        logger.debug('A new task will be inserted. (Title: {0})'.format(
+        logger.debug('A new task will be inserted. (Title: \'{0}\')'.format(
             task.title))
 
         task.save()
     except ValidationError as e:
+        # This can happen if an error occured during insertion, or if the fields
+        # of the Task are invalid.
         logger.exception('An exception has been encountered during the '
-        'insertion of a task.')
+            'insertion of a task.')
         raise TaskError('Couldn\'t add your task to the list.')
 
     return task.id

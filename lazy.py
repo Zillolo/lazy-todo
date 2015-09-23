@@ -1,9 +1,9 @@
 """ lazy
 
     Usage:
-        lazy new
-        lazy show
-        lazy remove <id>
+        lazy (new|n)
+        lazy (show|s) [<id>]
+        lazy (delete|del|d) <id>
 
     Options:
     -h, --help  : show this help message
@@ -11,7 +11,7 @@
 
 from docopt import docopt
 
-from app.task import TaskError, addTask, removeTask, showByAssigne
+from app.task import TaskError, addTask, removeTaskById, fetchByAssignee
 
 def new():
     title = input('Title: ')
@@ -38,26 +38,35 @@ def new():
     print("Your task has been added with the id {0}".format(id))
 
 def showForCurrentUser():
-    tasks = showByAssigne('test@test.com')
-    print('===============================================================')
-    for task in tasks:
-        print(task)
-        print('===============================================================')
-
-def remove(id):
     try:
-        removeTask(id)
+        tasks = fetchByAssignee('test@test.com')
+        print('===============================================================')
+        for task in tasks:
+            print(task)
+            print('===============================================================')
+    except TaskError:
+        print('No tasks found.')
+
+def delete(id):
+    try:
+        removeTaskById(id)
     except TaskError as e:
         print(e)
 
 def main(docopt_args):
 
-    if docopt_args['new']:
-        new()
-    elif docopt_args['show']:
-        showForCurrentUser()
-    elif docopt_args['remove']:
-        remove(docopt_args['<id>'])
+    try:
+        if docopt_args['new'] or docopt_args['n']:
+            new()
+        elif docopt_args['show'] or docopt_args['s']:
+            if docopt_args['<id>']:
+                print('Not currently implemented.')
+            else:
+                showForCurrentUser()
+        elif docopt_args['delete'] or docopt_args['del'] or docopt_args['d']:
+            delete(docopt_args['<id>'])
+    except KeyboardInterrupt:
+        return
 
 if __name__ == '__main__':
     args = docopt(__doc__)

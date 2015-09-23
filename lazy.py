@@ -4,6 +4,8 @@
         lazy (new|n)
         lazy (show|s) [<id>]
         lazy (delete|del|d) <id>
+        lazy (import|imp) <path>
+        lazy (export|exp) <path>
 
     Options:
     -h, --help  : show this help message
@@ -65,6 +67,10 @@ def main(docopt_args):
                 showForCurrentUser()
         elif docopt_args['delete'] or docopt_args['del'] or docopt_args['d']:
             delete(docopt_args['<id>'])
+        elif docopt_args['import'] or docopt_args['imp']:
+            print('Not currently implemented.')
+        elif docopt_args['export'] or docopt_args['exp']:
+            print('Not currently implemented.')
     except KeyboardInterrupt:
         return
 

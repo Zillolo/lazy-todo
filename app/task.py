@@ -90,6 +90,17 @@ def addTask(title, description, creator, assigne, created_at=None, status=None,
 
     return task.id
 
+def showByAssigne(assigne):
+    try:
+        tasks = Task.objects(assigne = assigne).all()
+    except ValidationError:
+        raise TaskError('The action returned no valid tasks.')
+
+    if tasks is None:
+        raise TaskError('The action returned no valid tasks.')
+
+    return tasks
+
 def removeTask(id):
     """
     Removes a task from the list, identified by it's ObjectId.

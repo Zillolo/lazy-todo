@@ -2,6 +2,7 @@
 
     Usage:
         lazy new
+        lazy show
         lazy remove <id>
 
     Options:
@@ -10,7 +11,7 @@
 
 from docopt import docopt
 
-from app.task import TaskError, addTask, removeTask
+from app.task import TaskError, addTask, removeTask, showByAssigne
 
 def new():
     title = input('Title: ')
@@ -35,6 +36,14 @@ def new():
         print(e)
 
     print("Your task has been added with the id {0}".format(id))
+
+def showForCurrentUser():
+    tasks = showByAssigne('test@test.com')
+    print('===============================================================')
+    for task in tasks:
+        print(task)
+        print('===============================================================')
+
 def remove(id):
     try:
         removeTask(id)
@@ -45,6 +54,8 @@ def main(docopt_args):
 
     if docopt_args['new']:
         new()
+    elif docopt_args['show']:
+        showForCurrentUser()
     elif docopt_args['remove']:
         remove(docopt_args['<id>'])
 

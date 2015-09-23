@@ -77,7 +77,7 @@ class TaskError(Exception):
 def addTask(title, description, creator, assignee, created_at=None, status=None,
     priority=None):
     """
-    Adds a task with the supplied parameters to the collection.
+    Adds a task with the supplied parameters to the repository.
 
     Args:
         title (str): The title of the Task.
@@ -91,6 +91,9 @@ def addTask(title, description, creator, assignee, created_at=None, status=None,
 
     Returns:
         ObjectId: The ObjectId of the newly inserted Task.
+
+    Raises:
+        TaskError: If any field of the Task is invalid.
     """
     task = Task()
     task.title = title
@@ -112,34 +115,51 @@ def addTask(title, description, creator, assignee, created_at=None, status=None,
 
         task.save()
     except ValidationError as e:
-        # This can happen if an error occured during insertion, or if the fields
-        # of the Task are invalid.
         logger.exception('An exception has been encountered during the '
             'insertion of a task.')
-        raise TaskError('Couldn\'t add your task to the list.')
+
+        #TODO: Clean this. We shouldnt display a dictionary directly to the user.
+        raise TaskError('Your task contains invalid information.\n'
+            'Please see:\n {0}'.format(e.to_dict()))
 
     return task.id
 
-def showByAssigne(assigne):
-    try:
-        tasks = Task.objects(assigne = assigne).all()
-    except ValidationError:
-        raise TaskError('The action returned no valid tasks.')
-
-    if tasks is None:
-        raise TaskError('The action returned no valid tasks.')
-
-    return tasks
-
-def removeTask(id):
+def fetchByAssignee(assignee):
     """
-    Removes a task from the list, identified by it's ObjectId.
-    """
-    try:
-        task = Task.objects(id = id).first()
-    except ValidationError:
-        raise TaskError('The specified task does not exist in the collection.')
+    Fetches all tasks for a specific Assignee from the repository.
 
+    Args:
+        assignee (str): The email address of the assignee.
+
+    Returns:
+        [Task]: A list of all tasks the assignee has in the repository.
+
+    Raises:
+        TaskError: If the assignee has no tasks in the repository.
+    """
+        tasks = Task.objects(assignee = assignee).all()
+
+        if tasks is None:
+            logger.info('A fetch operation returned no results.')
+            raise TaskError('The specified assignee has no tasks in the'
+                ' repository.')
+
+def removeTaskById(id):
+    """
+    Removes the Task with the ID 'id' from the repository.
+
+    Args:
+        id (ObjectId): The ObjectId of the task that will be removed.
+
+    Raises:
+        TaskError: If the task with the ID 'id' doesn't exist.
+    """
+    # Fetch the task from the collection.
+    task = Task.objects(id = id).first()
+
+    # If the task does not exist, throw an error.
     if task is None:
-        raise TaskError('The specified task does not exist in the collection.')
+        raise TaskError('The task with the ID {0} does not exist in the'
+            ' repository. No tasks have been removed.')
+
     task.delete()

@@ -44,6 +44,13 @@ class Task(Document):
     status = IntField(default=Status.OPEN, required=True)
     priority = IntField(default=Priority.LOW, required=True)
 
+    def __str__(self):
+        return ('ID: {7}\nTitle: {0}\nCreator: {2}\nAssigne: {3}\n'
+            'Created: {4}\nStatus: {5}\nPriority: {6}\n'
+            '\nDescription: {1}\n'.format(self.title,
+                self.description, self.creator, self.assigne, self.created_at,
+                self.status, self.priority, self.id))
+
 class TaskError(Exception):
     """
     An exception to be used for all error that can occure during handling of tasks.

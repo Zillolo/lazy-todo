@@ -1,6 +1,6 @@
+import datetime, enum
 from mongoengine import Document, DateTimeField, EmailField, IntField,  \
     ReferenceField, StringField, ValidationError
-import datetime, enum
 
 from app import logger
 

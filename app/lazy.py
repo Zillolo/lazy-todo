@@ -5,7 +5,7 @@
         lazy (show|s) [<id>]
         lazy (delete|del|d) <id>
         lazy (import|imp) <path>
-        lazy (export|exp) <path>
+        lazy (export|exp) <path> [<id>]
 
     Options:
     -h, --help  : show this help message
@@ -14,7 +14,8 @@
 from docopt import docopt
 
 from app import config
-from app.task import TaskError, addTask, removeTaskById, fetchByAssignee
+from app.data import exportToFile
+from app.task import Task, TaskError, addTask, removeTaskById, fetchByAssignee
 
 def new():
     title = input('Title: ')
@@ -56,6 +57,18 @@ def delete(id):
     except TaskError as e:
         print(e)
 
+def exportTask(path, id):
+    task = Task.objects(id = id).first()
+    if task is None:
+        print('The specified task was not found.')
+        return
+
+    exportToFile([task], path)
+
+def exportAll(path):
+    tasks = Task.objects(assignee = config['User']['email']).all()
+    exportToFile(tasks, path)
+
 def main(docopt_args):
 
     try:
@@ -71,7 +84,10 @@ def main(docopt_args):
         elif docopt_args['import'] or docopt_args['imp']:
             print('Not currently implemented.')
         elif docopt_args['export'] or docopt_args['exp']:
-            print('Not currently implemented.')
+            if docopt_args['<id>']:
+                exportTask(docopt_args['<path>'],docopt_args['<id>'])
+            else:
+                exportAll(docopt_args['<path>'])
     except KeyboardInterrupt:
         return
 

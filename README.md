@@ -7,6 +7,7 @@ Currently the following settings are to be configured in 'config.cfg':
 - DB - The name of the database that will be used.
 - Host - The host name of the database server.
 - Port - The port of the database server.
+
 ### User
 - Email - The email address of the current user
 

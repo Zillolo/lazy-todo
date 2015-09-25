@@ -36,10 +36,9 @@ def new():
 
     try:
         id = addTask(title, description, creator, assigne, priority=priority)
+        print("Your task has been added with the id {0}".format(id))
     except TaskError as e:
         print(e)
-
-    print("Your task has been added with the id {0}".format(id))
 
 def showForCurrentUser():
     try:

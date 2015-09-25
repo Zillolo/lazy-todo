@@ -72,7 +72,7 @@ class TaskError(Exception):
     def __init__(self, message):
         self.message = message
     def __str__(self):
-        return repr(self.message)
+        return self.message
 
 def addTask(title, description, creator, assignee, created_at=None, status=None,
     priority=None):
@@ -127,8 +127,10 @@ def addTask(title, description, creator, assignee, created_at=None, status=None,
             ' insertion of a task.')
 
         #TODO: Clean this. We shouldnt display a dictionary directly to the user.
-        raise TaskError('Your task contains invalid information.\n'
-            'Please see:\n {0}'.format(e.to_dict()))
+        errorMsg = 'Your task contains invalid information.\n'
+        for field,msg in e.to_dict().items():
+            errorMsg = errorMsg + 'Please see \'{0}\': {1}'.format(field, msg)
+        raise TaskError(errorMsg)
 
     return task.id
 

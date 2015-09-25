@@ -13,12 +13,13 @@
 
 from docopt import docopt
 
+from app import config
 from app.task import TaskError, addTask, removeTaskById, fetchByAssignee
 
 def new():
     title = input('Title: ')
     description = input('Description: ')
-    creator = input('Creator(Email): ')
+    creator = config['User']['email']
     assigne = input('Assigne(Email): ')
     priority = input('Priority(0 = LOW, 1 = MIDDLE, 2 = HIGH): ')
 
@@ -41,7 +42,7 @@ def new():
 
 def showForCurrentUser():
     try:
-        tasks = fetchByAssignee('test@test.com')
+        tasks = fetchByAssignee(config['User']['email'])
         print('===============================================================')
         for task in tasks:
             print(task)

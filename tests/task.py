@@ -3,7 +3,7 @@ from mongoengine import ValidationError
 from nose.tools import raises
 import datetime
 
-from app.task import Priority, Status, Task, TaskError, addTask, \
+from ..app.task import Priority, Status, Task, TaskError, addTask, \
     fetchByAssignee, removeTaskById
 
 def test_Add_Task():

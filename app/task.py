@@ -172,6 +172,6 @@ def removeTaskById(id):
     # If the task does not exist, throw an error.
     if task is None:
         raise TaskError('The task with the ID {0} does not exist in the'
-            ' repository. No tasks have been removed.')
+            ' repository. No tasks have been removed.'.format(id))
 
     task.delete()

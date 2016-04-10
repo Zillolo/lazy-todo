@@ -1,3 +1,0 @@
-#!/usr/bin/zsh
-
-python -m app.lazy $@

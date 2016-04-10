@@ -68,7 +68,8 @@ def exportAll(path):
     tasks = Task.objects(assignee = config['User']['email']).all()
     exportToFile(tasks, path)
 
-def main(docopt_args):
+def main():
+    docopt_args = docopt(__doc__)
 
     try:
         if docopt_args['new'] or docopt_args['n']:
@@ -89,7 +90,3 @@ def main(docopt_args):
                 exportAll(docopt_args['<path>'])
     except KeyboardInterrupt:
         return
-
-if __name__ == '__main__':
-    args = docopt(__doc__)
-    main(args)

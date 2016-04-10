@@ -75,7 +75,7 @@ class TaskError(Exception):
         return self.message
 
 def addTask(title, description, creator, assignee, created_at=None, status=None,
-    priority=None):
+    priority=None, id=None):
     """
     Adds a task with the supplied parameters to the repository.
 
@@ -88,6 +88,7 @@ def addTask(title, description, creator, assignee, created_at=None, status=None,
         created_at (datetime): The datetime of creation.
         status (Status): The status of the Task.
         priority (Priority): The priority level of the Task.
+        id (ObjectId): The ObjectId of the Task.
 
     Returns:
         ObjectId: The ObjectId of the newly inserted Task.
@@ -116,6 +117,8 @@ def addTask(title, description, creator, assignee, created_at=None, status=None,
         task.status = status
     if priority is not None:
         task.priority = priority
+    if id is not None:
+        task.id = id
 
     try:
         logger.debug('A new task will be inserted. (Title: \'{0}\')'.format(

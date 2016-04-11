@@ -1,0 +1,32 @@
+{
+    "hooks" : [
+        {
+            "name" : "New Task",
+            "description" : "Creates a new task.",
+            "commands" : ["new", "n"],
+            "function" : "builtin.builtin.newTask",
+            "args" : []
+        },
+        {
+            "name" : "Show Tasks",
+            "description" : "Shows all tasks for the current user.",
+            "commands" : ["show", "s"],
+            "function" : "builtin.builtin.showTasks",
+            "args" : []
+        },
+        {
+            "name" : "Show Task",
+            "description" : "Show a specific task.",
+            "commands" : ["show", "s"],
+            "function" : "builtin.builtin.showTask",
+            "args" : ["id"]
+        },
+        {
+            "name" : "Delete Task",
+            "description" : "Delete a specific task.",
+            "commands" : ["delete", "d"],
+            "function" : "builtin.builtin.deleteTask",
+            "args" : ["id"]
+        }
+    ]
+}

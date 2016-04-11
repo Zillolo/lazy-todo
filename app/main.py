@@ -2,6 +2,7 @@ from app import logger
 from app.plugins import loadPlugins
 
 import logging
+import sys
 
 
 def initLogging():
@@ -23,3 +24,6 @@ def main():
 
     plugins = loadPlugins("plugins")
     logger.info("{0} plugins loaded.".format(len(plugins)))
+
+    func = plugins.resolve(sys.argv[1])
+    func()

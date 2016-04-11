@@ -23,7 +23,6 @@ def loadPlugins(path):
         logger.debug("Found directory item: {0}".format(item))
         # Only take action if the item is a directory.
         if os.path.isdir(path + "/" + item):
-            logger.debug("Item is a directory.")
             # Check if the hooks file exists.
             if os.path.exists(path + "/" + item + "/" + Plugins.HOOKS_FILE):
                 logger.debug("A hooks file was found.")
@@ -44,11 +43,13 @@ def resolveHook(function):
         # NOTE: Possibly return an error handler here.
         return None
 
-    module = function.split(".")[0:len(function) - 1]
-    function = function.split(".")[-1]
-    func = getattr(__import__(module), function)
-
-    return func
+    split = function.split(".")
+    module = split[0:-1]
+    module = "plugins." + ".".join(module)
+    function = split[-1]
+    logger.debug("Module: {0}, Function: {1}".format(module, function))
+    module = __import__(module, fromlist=[function])
+    return getattr(module, function)
 
 Hook = namedtuple("Hook", "name description commands function args")
 
